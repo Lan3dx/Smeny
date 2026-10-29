@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b1020">
+<title>Смены ВМЗ</title>
+<meta name="apple-mobile-web-app-title" content="Смены">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+:root{--day:#ffb340;--night:#7d7aff;--post:#5ac8c8;--off:#8e93a6;--txt:#f5f6fa;--dim:rgba(245,246,250,.58);--glass:rgba(255,255,255,.09);--line:rgba(255,255,255,.16)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+html{-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;color:var(--txt);background:#0b1020;padding:env(safe-area-inset-top,0px) 14px calc(env(safe-area-inset-bottom,0px) + 18px);max-width:520px;margin:0 auto;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:-1;background:#0b1020}
+.bg i{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55}
+.bg i:nth-child(1){width:60vw;height:60vw;background:#ff9f2e;top:-15vw;left:-20vw;opacity:.35}
+.bg i:nth-child(2){width:70vw;height:70vw;background:#5b57ff;top:35vh;right:-30vw}
+.bg i:nth-child(3){width:55vw;height:55vw;background:#18b6b0;bottom:-15vw;left:-10vw;opacity:.35}
+.glass{background:var(--glass);border:1px solid var(--line);-webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);border-radius:22px;box-shadow:0 8px 30px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.18)}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 2px 10px}
+header h1{font-size:26px;font-weight:700;margin:0;text-transform:capitalize;letter-spacing:-.4px}
+.nav{display:flex;gap:8px}
+.nav button{width:38px;height:38px;border-radius:19px;font-size:18px}
+#live{padding:16px;margin-bottom:12px}
+#live .row{display:flex;justify-content:space-between;align-items:baseline}
+#live .lbl{font-size:14px;color:var(--dim)}
+#live .big{font-size:38px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-1px;margin:4px 0 8px}
+#live .tag{font-weight:600;font-size:15px}
+.bar{height:6px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar b{display:block;height:100%;border-radius:3px;width:0}
+.sub{margin-top:10px;font-size:13px;color:var(--dim)}
+.c-d{color:var(--day)}.c-n{color:var(--night)}.c-p{color:var(--post)}.c-o{color:var(--off)}
+.wd,.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.wd{padding:0 8px 6px;font-size:12px;color:var(--dim);text-align:center}
+.grid{padding:8px}
+.cell{position:relative;min-width:0;overflow:hidden;aspect-ratio:1/1.12;border-radius:14px;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:5px 0 4px;background:rgba(255,255,255,.04)}
+.cell.x{opacity:.35}
+.cell b{font-size:16px;font-weight:600}
+.cell .ic{font-style:normal;font-size:11px;height:13px;line-height:13px}
+.cell small{font-size:9px;letter-spacing:-.2px;color:var(--dim);white-space:nowrap}
+.cell.d{background:linear-gradient(160deg,rgba(255,179,64,.55),rgba(255,140,40,.25));border-color:rgba(255,190,90,.6)}
+.cell.n{background:linear-gradient(160deg,rgba(125,122,255,.6),rgba(80,70,220,.28));border-color:rgba(150,148,255,.6)}
+.cell.p{background:rgba(90,200,200,.14);border-color:rgba(90,200,200,.35)}
+.cell.t{box-shadow:0 0 0 2px #fff}
+.cell.has::after{content:"";position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:3px;background:#fff}
+.legend{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;font-size:12px;color:var(--dim);padding:12px 0}
+.legend span:before{content:"";display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:5px;background:currentColor;vertical-align:-1px}
+.fab{width:100%;padding:14px;margin-top:4px;font-weight:600}
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:5;align-items:flex-end}
+#ov.on{display:flex}
+#sh{width:100%;max-width:520px;margin:0 auto;max-height:88vh;overflow:auto;border-radius:28px 28px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom,0px) + 22px);background:rgba(28,32,52,.82);-webkit-backdrop-filter:blur(30px) saturate(160%);backdrop-filter:blur(30px) saturate(160%);border:1px solid var(--line);border-bottom:0}
+#sh h2{margin:0 0 2px;font-size:22px;text-transform:capitalize}
+.card{border-radius:18px;padding:12px;margin-top:12px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.card.d{border-color:rgba(255,179,64,.55)}.card.n{border-color:rgba(125,122,255,.65)}
+.card h3{margin:0 0 8px;font-size:15px}
+.names{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.names span{background:rgba(255,255,255,.12);border-radius:12px;padding:4px 10px;font-size:14px}
+.names em{color:var(--dim);font-size:13px;font-style:normal}
+textarea,select{width:100%;font:inherit;font-size:16px;color:var(--txt);background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:12px;padding:10px;resize:vertical;outline:0}
+select option{color:#000}
+.chips{display:flex;gap:8px;margin:8px 0}
+.chips button{flex:1;padding:11px 0;border-radius:14px;background:rgba(255,255,255,.09);border:1px solid var(--line);font-weight:700}
+.chips button.on{background:#fff;color:#111}
+.close{float:right;width:32px;height:32px;border-radius:16px;background:rgba(255,255,255,.14)}
+label{display:block;font-size:14px;color:var(--dim);margin:14px 0 6px}
+.others{font-size:13px;color:var(--dim);margin-top:12px}
+</style>
+</head>
+<body>
+<div class="bg"><i></i><i></i><i></i></div>
+<header>
+  <h1 id="mt"></h1>
+  <div class="nav">
+    <button class="glass" id="pv">‹</button>
+    <button class="glass" id="td" style="width:auto;padding:0 12px;font-size:14px">Сегодня</button>
+    <button class="glass" id="nx">›</button>
+  </div>
+</header>
+<div id="live" class="glass"></div>
+<div class="wd"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+<div id="g" class="grid glass"></div>
+<div class="legend"><span class="c-d">День 7–19</span><span class="c-n">Ночь 19–7</span><span class="c-p">Отсыпной</span><span class="c-o">Выходной</span></div>
+<button class="glass fab" id="set">⚙︎ Бригада, составы, настройки</button>
+<div id="ov"><div id="sh"></div></div>
+
+<script>
+const ORDER=['Г','В','Б','А'], ALL=['А','Б','В','Г'];
+const ANCHOR=Math.floor(Date.UTC(2026,9,28)/864e5); // 28.10.2026 днём работала бригада Г
+let mem={}, st={me:'Б',off:0,roster:{А:'',Б:'',В:'',Г:''},notes:{}};
+try{const s=localStorage.getItem('smeny');if(s)st=Object.assign(st,JSON.parse(s))}catch(e){}
+const save=()=>{try{localStorage.setItem('smeny',JSON.stringify(st))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=(y,m,d)=>Math.floor(Date.UTC(y,m,d)/864e5);
+const todayN=()=>{const n=new Date();return num(n.getFullYear(),n.getMonth(),n.getDate())};
+const idx=n=>n-ANCHOR+st.off;
+const dayB=n=>ORDER[((idx(n)%4)+4)%4];
+const nightB=n=>dayB(n-1);
+const state=(b,n)=>(((idx(n)-ORDER.indexOf(b))%4)+4)%4; // 0 день,1 ночь,2 отсыпной,3 выходной
+const key=n=>new Date(n*864e5).toISOString().slice(0,10);
+const at=(n,h)=>{const u=new Date(n*864e5);return new Date(u.getUTCFullYear(),u.getUTCMonth(),u.getUTCDate(),h)};
+const names=b=>(st.roster[b]||'').split('\n').map(s=>s.trim()).filter(Boolean);
+const two=x=>String(x).padStart(2,'0');
+let view=new Date();view=new Date(view.getFullYear(),view.getMonth(),1);
+
+function render(){
+  const y=view.getFullYear(),m=view.getMonth();
+  document.getElementById('mt').textContent=new Date(Date.UTC(y,m,1)).toLocaleDateString('ru-RU',{month:'long',year:'numeric',timeZone:'UTC'});
+  const first=num(y,m,1),off=(new Date(Date.UTC(y,m,1)).getUTCDay()+6)%7;
+  const dim=new Date(Date.UTC(y,m+1,0)).getUTCDate(),tot=Math.ceil((off+dim)/7)*7,tn=todayN();
+  let h='';
+  for(let i=0;i<tot;i++){
+    const n=first-off+i,d=new Date(n*864e5).getUTCDate(),s=state(st.me,n),cur=n>=first&&n<first+dim;
+    const cl=['cell',cur?'':'x',['d','n','p',''][s],n===tn?'t':'',(st.notes[key(n)+'d']||st.notes[key(n)+'n'])?'has':''].join(' ');
+    const ic=['☀️','🌙','💤',''][s];
+    h+=`<button class="${cl}" data-n="${n}"><b>${d}</b><i class="ic">${ic}</i><small>☀${dayB(n)} ☾${nightB(n)}</small></button>`;
+  }
+  document.getElementById('g').innerHTML=h;
+  live();
+}
+
+function myShifts(){
+  const t=todayN(),r=[];
+  for(let n=t-2;n<=t+9;n++){const s=state(st.me,n);
+    if(s===0)r.push({a:at(n,7),b:at(n,19),k:'d'});
+    if(s===1)r.push({a:at(n,19),b:at(n+1,7),k:'n'});}
+  return r;
+}
+function dur(ms){const s=Math.max(0,Math.floor(ms/1000)),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),c=s%60;
+  return d>0?`${d} д ${h} ч ${two(m)} м`:`${two(h)}:${two(m)}:${two(c)}`}
+function live(){
+  const now=new Date(),sh=myShifts(),cur=sh.find(x=>now>=x.a&&now<x.b),nx=sh.find(x=>x.a>now);
+  const hr=now.getHours(),t=todayN();
+  const duty=hr>=19?nightB(t):hr<7?nightB(t-1):dayB(t);
+  let html='';
+  if(cur){
+    const p=(now-cur.a)/(cur.b-cur.a)*100,c=cur.k==='d'?'var(--day)':'var(--night)';
+    html=`<div class="row"><span class="lbl">Осталось до конца смены</span><span class="tag c-${cur.k}">${cur.k==='d'?'☀️ День':'🌙 Ночь'}</span></div>
+    <div class="big">${dur(cur.b-now)}</div><div class="bar"><b style="width:${p}%;background:${c}"></b></div>`;
+  }else if(nx){
+    const wd=nx.a.toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long'});
+    html=`<div class="row"><span class="lbl">Ты сейчас отдыхаешь</span><span class="tag c-${nx.k}">${nx.k==='d'?'☀️ День':'🌙 Ночь'} впереди</span></div>
+    <div class="big">${dur(nx.a-now)}</div><div class="sub" style="margin:0">до начала: ${wd}, ${two(nx.a.getHours())}:00</div>`;
+  }
+  html+=`<div class="sub">Моя бригада: <b style="color:#fff">${st.me}</b> · Сейчас на смене: <b style="color:#fff">${duty}</b></div>`;
+  document.getElementById('live').innerHTML=html;
+}
+setInterval(live,1000);
+
+const ov=document.getElementById('ov'),sh=document.getElementById('sh');
+const open=h=>{sh.innerHTML=h;ov.classList.add('on')};
+const close=()=>{ov.classList.remove('on');render()};
+ov.addEventListener('click',e=>{if(e.target===ov||e.target.classList.contains('close'))close()});
+
+function namesHtml(b){const a=names(b);return `<div class="names">${a.length?a.map(x=>`<span>${esc(x)}</span>`).join(''):'<em>Состав не заполнен (⚙︎ в настройках)</em>'}</div>`}
+function dayCard(n,k){
+  const b=k==='d'?dayB(n):nightB(n),mine=b===st.me;
+  return `<div class="card ${k}"><h3>${k==='d'?'☀️ День 07:00–19:00':'🌙 Ночь 19:00–07:00'} · бригада ${b}${mine?' (моя)':''}</h3>${namesHtml(b)}
+  <textarea rows="2" placeholder="Заметки на смену…" data-note="${key(n)+k}">${esc(st.notes[key(n)+k]||'')}</textarea></div>`;
+}
+function openDay(n){
+  const t=new Date(n*864e5).toLocaleDateString('ru-RU',{weekday:'long',day:'numeric',month:'long',timeZone:'UTC'});
+  const s=state(st.me,n),mine=['твоя дневная смена','твоя ночная смена','отсыпной','выходной'][s];
+  const p=ALL.find(b=>state(b,n)===2),o=ALL.find(b=>state(b,n)===3);
+  open(`<button class="close">✕</button><h2>${t}</h2><div class="sub" style="margin:0">У тебя: ${mine}</div>
+  ${dayCard(n,'d')}${dayCard(n,'n')}<div class="others">Отсыпной: бригада ${p} · Выходной: бригада ${o}</div>`);
+}
+function openSettings(){
+  const t=todayN();
+  open(`<button class="close">✕</button><h2>Настройки</h2>
+  <label>Моя бригада</label>
+  <div class="chips" id="chm">${ALL.map(b=>`<button data-me="${b}" class="${b===st.me?'on':''}">${b}</button>`).join('')}</div>
+  <label>Сегодня днём (с 7 до 19) работает бригада — если график сдвинулся, поправь здесь</label>
+  <select id="cal">${ALL.map(b=>`<option ${b===dayB(t)?'selected':''}>${b}</option>`).join('')}</select>
+  <label>Состав бригад (один человек на строку)</label>
+  ${ALL.map(b=>`<div class="sub" style="margin:8px 0 4px">Бригада ${b}</div><textarea rows="3" data-r="${b}" placeholder="Иванов И.И.&#10;Петров П.П.">${esc(st.roster[b])}</textarea>`).join('')}`);
+}
+sh.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.note){const v=t.value;if(v.trim())st.notes[t.dataset.note]=v;else delete st.notes[t.dataset.note];save()}
+  if(t.dataset.r){st.roster[t.dataset.r]=t.value;save()}
+});
+sh.addEventListener('change',e=>{
+  if(e.target.id==='cal'){const t=todayN();const want=ORDER.indexOf(e.target.value);
+    st.off=(((want-(t-ANCHOR))%4)+4)%4;save();openSettings()}
+});
+sh.addEventListener('click',e=>{
+  const b=e.target.closest('[data-me]');
+  if(b){st.me=b.dataset.me;save();openSettings()}
+});
+document.getElementById('g').addEventListener('click',e=>{const c=e.target.closest('.cell');if(c)openDay(+c.dataset.n)});
+document.getElementById('set').onclick=openSettings;
+document.getElementById('pv').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);render()};
+document.getElementById('nx').onclick=()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()};
+document.getElementById('td').onclick=()=>{const n=new Date();view=new Date(n.getFullYear(),n.getMonth(),1);render()};
+render();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+</script>
+</body>
+</html>
